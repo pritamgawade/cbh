@@ -1,4 +1,4 @@
-const crypto = require("crypto");
+const utils = require("./utils");
 
 exports.deterministicPartitionKey = (event) => {
   return getCandidate(event);
@@ -11,8 +11,8 @@ const getCandidate = (event) => {
     if (event.partitionKey) {
       candidate = event.partitionKey;
     } else {
-      const data = JSON.stringify(event);
-      candidate = crypto.createHash("sha3-512").update(data).digest("hex");
+      const data = utils.getStringifiedString(event);
+      candidate = utils.createHashObj(data);
     }
   }
   return updateCandidate(candidate);
@@ -23,19 +23,21 @@ const updateCandidate = (candidate) => {
   const MAX_PARTITION_KEY_LENGTH = 256;
   if (candidate) {
     if (typeof candidate !== "string") {
-      candidate = JSON.stringify(candidate);
+      candidate = utils.getStringifiedString(candidate);
     }
   } else {
     candidate = TRIVIAL_PARTITION_KEY;
   }
 
   if (candidate.length > MAX_PARTITION_KEY_LENGTH) {
-    candidate = crypto.createHash("sha3-512").update(candidate).digest("hex");
+    candidate = utils.createHashObj(candidate);
   }
   return candidate;
 };
 
 /*
-Created a function getCandidate to retrieve partitionKey from event and passed that candidate to updateCandidate function which then returns modified candidate to the main function deterministicPartitionKey. Differentiating the functions makes the code readable
+Created a function getCandidate to retrieve partitionKey from event and passed that candidate to updateCandidate function which then returns modified candidate to the main function deterministicPartitionKey. Differentiating the functions makes the code readable.
+
+Created common functions getStringifiedString and createHashObj which are reusable
 
 */
