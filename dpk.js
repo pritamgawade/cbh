@@ -34,3 +34,8 @@ const updateCandidate = (candidate) => {
   }
   return candidate;
 };
+
+/*
+Created a function getCandidate to retrieve partitionKey from event and passed that candidate to updateCandidate function which then returns modified candidate to the main function deterministicPartitionKey. Differentiating the functions makes the code readable
+
+*/
